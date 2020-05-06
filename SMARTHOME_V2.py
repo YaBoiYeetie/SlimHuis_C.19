@@ -5,6 +5,7 @@ __date__ = "05/05/2020"
 # LIBRARIES
 import time
 import thread
+from multiprocessing import Process
 from gpiozero import Button
 from gpiozero import LED
 
@@ -15,6 +16,7 @@ BUTTON_LED_ARRAY = {
     Button(23): LED(16),
     Button(18): LED(5)
 }          
+
 
 # FUNCTIONS
 def better_setup_button(button, LED):    
@@ -146,7 +148,6 @@ def setup_button(button, LED):
             print("TIME ELAPSED: " + str(time_elapsed))
 
     time.sleep(1/30)
-"""
 
 
 def main():
@@ -157,6 +158,22 @@ def main():
             print("ERROR: FAILED TO CREATE NEW THREAD.")
 
         time.sleep(0.125)
+"""
+
+
+def main():
+    running_processes = []
+
+    for key, value in BUTTON_LED_ARRAY.items():
+        try:
+            new_process = Process(target=better_setup_button, args=(key, value))
+            new_process.start()
+            running_processes.append(new_process)
+        except:
+            print("ERROR: FAILED TO CREATE NEW PROCESS.")
+
+        time.sleep(0.125)
+        
 
 # CODE
 if __name__ == "__main__":
